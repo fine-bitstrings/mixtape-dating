@@ -1,0 +1,82 @@
+<div id="new-playlist">
+  <input type="text" id="title"></input>
+  <label>Playlist</label>
+  <ol id="list">
+  </ol>
+  <hr />
+  <div id="add">
+	<input type="text" id="song-title" placeholder="Artist - Title" />
+	<input type="text" id="song-link" placeholder="url to song" />
+	<button id="add-song" onclick="on_add_song_click()">Add Song</button>
+  </div>
+  <input id="email" type="email" placeholder="you@example.com" />
+  <button id="save-playlist" onclick="create_playlist()">Save Playlist</button>
+</div>
+
+<script type="text/javascript">
+
+var add_song_button = document.querySelector('#add-song');
+var save_playlist_button = document.querySelector('#save-playlist');
+var title_input = document.querySelector('#title');
+var song_input = document.querySelector('#song-link');
+var song_title_input = document.querySelector('#song-title');
+var email_input = document.querySelector('#email');
+var playlist = document.querySelector('#list');
+
+var songs = [];
+var playlists = [];
+
+var clean = function(input){
+  if(input.value === undefined || input.value === null || input.value === 'N/A'){
+    input.value = '';
+  }
+
+  return input.value;
+};
+
+var playlist_data = [];
+var HOST = 'http://localhost:16000'
+
+var on_add_song_click = function(e){
+  var song_title = song_title_input.value;
+  var song_link = song_input.value;
+
+  song_title = clean(song_title_input);
+  song_link = clean(song_input);
+  
+  var playlist_item = document.createElement('li');
+  var link = document.createElement('a');
+  link.href = song_link;
+  link.text = song_title;
+  playlist_item.appendChild(link);
+  playlist.appendChild(playlist_item); 
+  
+  playlist_data.push({'title': song_title, 'link': song_link});
+};
+
+var create_playlist = function(){
+  var playlist_title = clean(title_input);
+  var email = clean(email_input);
+  
+  var payload = {
+    title: playlist_title,
+	playlist: playlist_data,
+	email: email
+  };
+  
+  var req = new XMLHttpRequest();
+  req.open('POST', HOST + '/create-playlist');
+  req.setRequestHeader('Content-Type', 'application/json');
+  
+  console.log(payload);
+  req.send(JSON.stringify(payload));
+};
+
+</script>
+
+<!--
+  Thanks to: 
+  
+  https://stackoverflow.com/questions/11563638/how-do-i-get-the-value-of-text-input-field-using-javascript
+  https://stackoverflow.com/questions/6304453/javascript-append-html-to-container-element-without-innerhtml
+-->
