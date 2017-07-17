@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title>Mixtape Dating</title>
+  </head>
+  <body>
+    <h1>Mixtape Dating</h1>
+    <a href="/client/create-playlist.html">Create a playlist...</a>
+    <h2>Playlists</h2>
+    <ol id="playlists">
+      <% for(var i=0; i<playlists.length; i++){ %>
+      <li>
+        <a href=<%= playlists[i].url %>><%= playlists[i].title %></a>
+      </li>
+      <% } %>
+    </ol>
+  </body>
+</html>

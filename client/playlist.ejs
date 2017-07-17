@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <title><%= playlist.title %> - Mixtape Dating</title>
+    
+  </head>
+  <body>
+    <%= playlist %>
+    <h1><%= playlist.title %></h1>
+    <ol id="playlist">
+      <% for(var i=0; i<playlist.playlist.length; i++){ %>
+      <li>
+        <a href="<%= playlist.playlist[i].link %>"><%= playlist.playlist[i].title %></a>
+      </li>
+      <% } %>
+    </ol>
+    <a href="mailto:<%= playlist.email %>"><%= playlist.email %></a>
+  </body>
+</html>

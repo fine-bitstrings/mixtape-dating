@@ -3,7 +3,6 @@
   <label>Playlist</label>
   <ol id="list">
   </ol>
-  <hr />
   <div id="add">
 	<input type="text" id="song-title" placeholder="Artist - Title" />
 	<input type="text" id="song-link" placeholder="url to song" />
@@ -13,19 +12,21 @@
   <button id="save-playlist" onclick="create_playlist()">Save Playlist</button>
 </div>
 
+<output id="playlist-url"></output>
+
 <script type="text/javascript">
 
-var add_song_button = document.querySelector('#add-song');
+// DOM items we'll need later
+var add_song_button      = document.querySelector('#add-song');
 var save_playlist_button = document.querySelector('#save-playlist');
-var title_input = document.querySelector('#title');
-var song_input = document.querySelector('#song-link');
-var song_title_input = document.querySelector('#song-title');
-var email_input = document.querySelector('#email');
-var playlist = document.querySelector('#list');
+var title_input          = document.querySelector('#title');
+var song_input           = document.querySelector('#song-link');
+var song_title_input     = document.querySelector('#song-title');
+var email_input          = document.querySelector('#email');
+var playlist             = document.querySelector('#list');
+var output               = document.querySelector('#playlist-url');
 
-var songs = [];
-var playlists = [];
-
+// a simple cleaning function to prevent undefined values on input
 var clean = function(input){
   if(input.value === undefined || input.value === null || input.value === 'N/A'){
     input.value = '';
@@ -34,6 +35,7 @@ var clean = function(input){
   return input.value;
 };
 
+// a few global variables
 var playlist_data = [];
 var HOST = 'http://localhost:16000'
 
@@ -67,8 +69,14 @@ var create_playlist = function(){
   var req = new XMLHttpRequest();
   req.open('POST', HOST + '/create-playlist');
   req.setRequestHeader('Content-Type', 'application/json');
-  
-  console.log(payload);
+  req.onload = function(e){
+    var link = document.createElement('a');
+    link.href = HOST + '/playlist/' + JSON.parse(e.target.response).url;
+    link.text = link.href;
+    
+    output.innerHTML = '';
+    output.appendChild(link);
+  };
   req.send(JSON.stringify(payload));
 };
 
@@ -76,7 +84,7 @@ var create_playlist = function(){
 
 <!--
   Thanks to: 
-  
+  https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest
   https://stackoverflow.com/questions/11563638/how-do-i-get-the-value-of-text-input-field-using-javascript
   https://stackoverflow.com/questions/6304453/javascript-append-html-to-container-element-without-innerhtml
 -->
