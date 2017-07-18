@@ -1,8 +1,9 @@
-'use strict'
+'use strict';
 
 const express = require('express');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
+
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -30,7 +31,6 @@ app.get('/playlist/:id', function(req, res){
   console.log('playlist/' + req.params.id, playlists[req.params.id]);
   res.render('playlist.ejs', {playlist: playlists[req.params.id]});
 });
-
 
 
 var PORT = 16000

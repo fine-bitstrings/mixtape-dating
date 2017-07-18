@@ -10,7 +10,7 @@
     <ol id="playlist">
       <% for(var i=0; i<playlist.playlist.length; i++){ %>
       <li>
-        <a href="<%= playlist.playlist[i].link %>"><%= playlist.playlist[i].title %></a>
+        <a target="_blank" href="<%= playlist.playlist[i].link %>"><%= playlist.playlist[i].title %></a>
       </li>
       <% } %>
     </ol>
@@ -24,4 +24,5 @@
 <!--
   Thanks:
   https://stackoverflow.com/questions/12564999/onclick-page-go-to-homepage-without-any-absolute-path
+  https://stackoverflow.com/questions/14132122/open-url-in-new-window-with-javascript
 -->
