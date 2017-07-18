@@ -19,17 +19,18 @@ app.get('/', function(req, res){
   res.render('index.ejs', {playlists: playlists});
 });
 
+app.post('/create-playlist/', function(req, res){
+  playlists.push(req.body);
+  var id = (playlists.length-1).toString();
+  playlists[playlists.length-1].url = '/playlist/' + id;
+  res.send(JSON.stringify({id: id}));
+});
+
 app.get('/playlist/:id', function(req, res){
   console.log('playlist/' + req.params.id, playlists[req.params.id]);
   res.render('playlist.ejs', {playlist: playlists[req.params.id]});
 });
 
-app.post('/create-playlist/', function(req, res){
-  playlists.push(req.body);
-  var link = (playlists.length-1).toString();
-  playlists[playlists.length-1].url = '/playlist/' + link;
-  res.send(JSON.stringify({url: link}));
-});
 
 
 var PORT = 16000

@@ -62,8 +62,8 @@ var create_playlist = function(){
   
   var payload = {
     title: playlist_title,
-	playlist: playlist_data,
-	email: email
+	  playlist: playlist_data,
+	  email: email
   };
   
   var req = new XMLHttpRequest();
@@ -71,7 +71,7 @@ var create_playlist = function(){
   req.setRequestHeader('Content-Type', 'application/json');
   req.onload = function(e){
     var link = document.createElement('a');
-    link.href = HOST + '/playlist/' + JSON.parse(e.target.response).url;
+    link.href = HOST + '/playlist/' + JSON.parse(e.target.response).id;
     link.text = link.href;
     
     output.innerHTML = '';

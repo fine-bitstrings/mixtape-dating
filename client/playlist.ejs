@@ -5,7 +5,7 @@
     
   </head>
   <body>
-    <%= playlist %>
+    <a href="/">Mixtape Dating</a>
     <h1><%= playlist.title %></h1>
     <ol id="playlist">
       <% for(var i=0; i<playlist.playlist.length; i++){ %>
@@ -15,5 +15,13 @@
       <% } %>
     </ol>
     <a href="mailto:<%= playlist.email %>"><%= playlist.email %></a>
+    <script type="text/javascript">
+      
+    </script>
   </body>
 </html>
+
+<!--
+  Thanks:
+  https://stackoverflow.com/questions/12564999/onclick-page-go-to-homepage-without-any-absolute-path
+-->
