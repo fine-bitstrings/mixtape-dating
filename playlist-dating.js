@@ -26,6 +26,7 @@ app.use('/client', express.static('client'));
 app.use(bodyParser.json());
 app.use(express.static('views'));
 
+var HOST = 'http://localhost:16000';
 app.get('/', function(req, res){
   console.log('get / routed...')
   var playlists = [];
@@ -34,8 +35,9 @@ app.get('/', function(req, res){
     playlists = [];
     
     for(var i=0; i<rows[0].length; i++){
-      playlists.push({title: rows[0][i]['Title'], email: rows[0][i]['Email']});
+      playlists.push({id: rows[0][i]['Id'], url: HOST + '/playlist/' + rows[0][i]['Id'], title: rows[0][i]['Title'], email: rows[0][i]['Email']});
     }
+    console.log(playlists);
     
     res.render('index.ejs', {playlists: playlists});
   });
@@ -74,7 +76,13 @@ app.post('/create-playlist/', function(req, res){
 
 app.get('/playlist/:id', function(req, res){
   console.log('get /playlist/:id')
-  res.render('playlist.ejs', {playlist: playlists[req.params.id]});
+  db.query('call GetPlaylist(?)', [parseInt(req.params.id)], function(err, rows, fields){
+    var playlist = [];
+    for(var i=0; i<rows[0].length; i++){
+      playlist.push({title: rows[0][i]['Title'], link: rows[0][i]['Link']});
+    }
+    res.render('playlist.ejs', {playlist: playlists[req.params.id]});
+  });
 });
 
 
