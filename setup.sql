@@ -1,3 +1,4 @@
+drop schema MixtapeDating;
 create schema MixtapeDating;
 use MixtapeDating;
 
@@ -29,8 +30,9 @@ create procedure MixtapeDating.InsertPlaylist
 begin
 	insert into 
 		Playlist (Title, Email) 
-    values
-		(@Title, @Email);
+  values
+		(_Title, _Email);
+    
 	select last_insert_id() as Id;
 end //
 delimiter ;
@@ -38,13 +40,13 @@ delimiter ;
 delimiter //
 create procedure MixtapeDating.InsertPlaylistItem
 (
-	in PlaylistId int, 
-	in Title varchar(255),
-	in Link varchar(255)
+	in _PlaylistId int, 
+	in _Title varchar(255),
+	in _Link varchar(255)
 )
 begin
 	insert intO PlaylistItem (PlaylistId, Title, Link)
-	values (@PlaylistId, @Title, @Link);
+	values (_PlaylistId, _Title, _Link);
 end //
 delimiter ;
 
@@ -62,23 +64,31 @@ delimiter ;
 delimiter //
 create procedure MixtapeDating.GetPlaylist
 (
-	in Id int
+	in _Id int
 )
 begin
 	select Id, Title, Link
 	from PlaylistItem
-	where PlaylistId = @Id; 
+	where PlaylistId = _Id; 
 end //
 delimiter ;
 
 delimiter //
 create procedure MixtapeDating.GetPlaylistInfo
 (
-  in Id int
+  in _Id int
 )
 begin
   select Title, Email
   from Playlist
-  where Id = @Id;
+  where Id = _Id;
 end //
 delimiter ;
+
+/* Degugging Data */
+INSERT INTO Playlist (Title, Email) VALUES ('For You!', 'moorej30@unlv.nevada.edu');
+
+INSERT INTO PlaylistItem (PlaylistId, Title, Link) 
+VALUES 
+(1, 'Regina Spektor - Dance Anthem of the 80s', 'https://www.youtube.com/watch?v=8zd0RZusvJk'), 
+(1, 'Regina Spektor - How', 'https://www.youtube.com/watch?v=7mBfW-CdgLE');

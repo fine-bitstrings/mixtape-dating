@@ -30,6 +30,9 @@ var HOST = 'http://localhost:16000';
 app.get('/', function(req, res){
   var playlists = [];
   db.query('call GetPlaylists()', [], function(err, rows, fields){
+    console.log('/ GetPlaylists();', rows);
+    
+    
     playlists = [];
     
     for(var i=0; i<rows[0].length; i++){
@@ -47,22 +50,20 @@ app.get('/', function(req, res){
 
 app.post('/create-playlist/', function(req, res){
   // playlists.push(req.body);
-  var id = (playlists.length-1).toString();
-  playlists[playlists.length-1].url = '/playlist/' + id;
-  res.send(JSON.stringify({id: id}));
-  
-  var r = db.query(
-    'call InsertPlaylist (?, ?);', 
+  // playlists[playlists.length-1].url = '/playlist/' + id;
+  db.query(
+    'call InsertPlaylist(?, ?);', 
     [req.body.title, req.body.email],
-    function(err, rows, fields){
-      var id = parseInt(rows[0]['Id']);
-      
+    function(err, ids, fields){ // ;)
+      // why is ids undefined?
+      console.log('ids:', ids);
+      var id = ids[0]['Id'];
       for(var i=0; i<req.body.playlist.length; i++){
         db.query(
           'call InsertPlaylistItem (?, ?, ?);',
           [id, req.body.playlist[i].title, req.body.playlist[i].link],
           function(err, rows, fields){
-            return 0;
+            res.send(JSON.stringify({id: id}));
           }
         );        
       }
@@ -72,24 +73,19 @@ app.post('/create-playlist/', function(req, res){
 
 app.get('/playlist/:id', function(req, res){
   db.query(
-    'call GetPlaylistInfo(?);', 
+    'call MixtapeDating.GetPlaylistInfo(?)', 
     req.params.id, 
-    function(err, playlistinfo, fields){
+    function(err, info, fields){
+      console.log('call GetPlaylistInfo(?):', req.params.id, info);
       db.query(
-        'call GetPlaylist(?);',
+        'call MixtapeDating.GetPlaylist(?)',
         req.params.id,
-        function(err, playlistitems, fields){
-          // console.log('call GetPlaylist:', err, playlistitems, fields)
-          var title = playlistinfo[0]['Title'];
-          var email = playlistinfo[0]['Email'];
-          var items = playlistitems[0].map(function(item){return {link: item['Link'], title: item['Title'] };});
-          
-          console.log(playlistitems);
-          
+        function(err, items, fields){
+          console.log('GetPlaylist(?):', req.params.id, err, items)
           res.render('playlist.ejs', {
-            title: title,
-            email: email,
-            items: items
+            title: info[0][0]['Title'],
+            email: info[0][0]['Email'],
+            items: items[0].map(function(item){return {link: item['Link'], title: item['Title'] };})
           });
         }
       );

@@ -2,12 +2,10 @@
 <html lang="en-us">
   <head>
     <title><%= title %> - Mixtape Dating</title>
-    
   </head>
   <body>
     <a href="/">Mixtape Dating</a>
     <h1><%= title %></h1>
-    <%= items %>
     <ol id="playlist">
       <% for(var i=0; i<items.length; i++){ %>
       <li>
@@ -16,9 +14,6 @@
       <% } %>
     </ol>
     <a href="mailto:<%= email %>"><%= email %></a>
-    <script type="text/javascript">
-      
-    </script>
   </body>
 </html>
 
