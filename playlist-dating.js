@@ -33,8 +33,8 @@ app.get('/', function(req, res){
     console.log('call GetPlaylist:', err, rows, fields);
     playlists = [];
     
-    for(var i=0; i<rows.length; i++){
-      playlists.push({title: rows[i].Title, email: rows[i].Email});
+    for(var i=0; i<rows[0].length; i++){
+      playlists.push({title: rows[0][i]['Title'], email: rows[0][i]['Email']});
     }
     
     res.render('index.ejs', {playlists: playlists});
