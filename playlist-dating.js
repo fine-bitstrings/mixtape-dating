@@ -19,7 +19,7 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', './client');
 
-var playlists = [];
+// var playlists = [];
 
 
 app.use('/client', express.static('client'));
@@ -28,26 +28,25 @@ app.use(express.static('views'));
 
 var HOST = 'http://localhost:16000';
 app.get('/', function(req, res){
-  console.log('get / routed...')
   var playlists = [];
   db.query('call GetPlaylists()', [], function(err, rows, fields){
-    console.log('call GetPlaylist:', err, rows, fields);
     playlists = [];
     
     for(var i=0; i<rows[0].length; i++){
-      playlists.push({id: rows[0][i]['Id'], url: HOST + '/playlist/' + rows[0][i]['Id'], title: rows[0][i]['Title'], email: rows[0][i]['Email']});
+      playlists.push({
+        id: rows[0][i]['Id'], 
+        url: HOST + '/playlist/' + rows[0][i]['Id'], 
+        title: rows[0][i]['Title'], 
+        email: rows[0][i]['Email']
+       });
     }
-    console.log(playlists);
-    
+
     res.render('index.ejs', {playlists: playlists});
   });
-  
-  console.log('/ rendering...')
 });
 
 app.post('/create-playlist/', function(req, res){
-  console.log('post /create-playlist/');
-  playlists.push(req.body);
+  // playlists.push(req.body);
   var id = (playlists.length-1).toString();
   playlists[playlists.length-1].url = '/playlist/' + id;
   res.send(JSON.stringify({id: id}));
@@ -56,33 +55,46 @@ app.post('/create-playlist/', function(req, res){
     'call InsertPlaylist (?, ?);', 
     [req.body.title, req.body.email],
     function(err, rows, fields){
-      console.log(err, rows, fields);
-      var id = rows[0]['Id'];
+      var id = parseInt(rows[0]['Id']);
       
       for(var i=0; i<req.body.playlist.length; i++){
         db.query(
           'call InsertPlaylistItem (?, ?, ?);',
           [id, req.body.playlist[i].title, req.body.playlist[i].link],
           function(err, rows, fields){
-            console.log('InsertPlaylistItem called');
+            return 0;
           }
         );        
       }
-
-      
     }
   );
 });
 
 app.get('/playlist/:id', function(req, res){
-  console.log('get /playlist/:id')
-  db.query('call GetPlaylist(?)', [parseInt(req.params.id)], function(err, rows, fields){
-    var playlist = [];
-    for(var i=0; i<rows[0].length; i++){
-      playlist.push({title: rows[0][i]['Title'], link: rows[0][i]['Link']});
+  db.query(
+    'call GetPlaylistInfo(?);', 
+    req.params.id, 
+    function(err, playlistinfo, fields){
+      db.query(
+        'call GetPlaylist(?);',
+        req.params.id,
+        function(err, playlistitems, fields){
+          // console.log('call GetPlaylist:', err, playlistitems, fields)
+          var title = playlistinfo[0]['Title'];
+          var email = playlistinfo[0]['Email'];
+          var items = playlistitems[0].map(function(item){return {link: item['Link'], title: item['Title'] };});
+          
+          console.log(playlistitems);
+          
+          res.render('playlist.ejs', {
+            title: title,
+            email: email,
+            items: items
+          });
+        }
+      );
     }
-    res.render('playlist.ejs', {playlist: playlists[req.params.id]});
-  });
+  );
 });
 
 

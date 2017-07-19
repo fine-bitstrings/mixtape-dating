@@ -65,8 +65,20 @@ create procedure MixtapeDating.GetPlaylist
 	in Id int
 )
 begin
-	select PlaylistId, Id, Title, Link
+	select Id, Title, Link
 	from PlaylistItem
-	where Id = @Id; 
+	where PlaylistId = @Id; 
+end //
+delimiter ;
+
+delimiter //
+create procedure MixtapeDating.GetPlaylistInfo
+(
+  in Id int
+)
+begin
+  select Title, Email
+  from Playlist
+  where Id = @Id;
 end //
 delimiter ;

@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html lang="en-us">
   <head>
-    <title><%= playlist.title %> - Mixtape Dating</title>
+    <title><%= title %> - Mixtape Dating</title>
     
   </head>
   <body>
     <a href="/">Mixtape Dating</a>
-    <h1><%= playlist.title %></h1>
+    <h1><%= title %></h1>
+    <%= items %>
     <ol id="playlist">
-      <% for(var i=0; i<playlist.playlist.length; i++){ %>
+      <% for(var i=0; i<items.length; i++){ %>
       <li>
-        <a target="_blank" href="<%= playlist.playlist[i].link %>"><%= playlist.playlist[i].title %></a>
+        <a target="_blank" href="<%= items[i].link %>"><%= items[i].title %></a>
       </li>
       <% } %>
     </ol>
-    <a href="mailto:<%= playlist.email %>"><%= playlist.email %></a>
+    <a href="mailto:<%= email %>"><%= email %></a>
     <script type="text/javascript">
       
     </script>
