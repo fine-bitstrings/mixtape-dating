@@ -29,12 +29,8 @@ app.use(express.static('views'));
 var HOST = 'http://localhost:16000';
 app.get('/', function(req, res){
   var playlists = [];
-  db.query('call GetPlaylists()', [], function(err, rows, fields){
-    console.log('/ GetPlaylists();', rows);
-    
-    
+  db.query('call GetPlaylists()', [], function(err, rows, fields){    
     playlists = [];
-    
     for(var i=0; i<rows[0].length; i++){
       playlists.push({
         id: rows[0][i]['Id'], 
@@ -43,28 +39,36 @@ app.get('/', function(req, res){
         email: rows[0][i]['Email']
        });
     }
-
     res.render('index.ejs', {playlists: playlists});
   });
 });
 
 app.post('/create-playlist/', function(req, res){
   
-  console.log('/create-playlist/: title', req.body.title, 'email', req.body.email, 'items', req.body.items);
   // playlists.push(req.body);
   // playlists[playlists.length-1].url = '/playlist/' + id;
   db.query(
-    'call InsertPlaylist(?, ?);', 
+    'call InsertPlaylist(?, ?);',
     [req.body.title, req.body.email],
     function(err, ids, _blah){ // ;)
-      console.log('ids', ids);
-      // var id = ids[0]['Id']; <-- currently evil
-      for(var i=0; i<req.body.items.length; i++){
-        db.query(
-          'call InsertPlaylistItem (?, ?, ?);',
-          [ids['Id'], req.body.items[i].title, req.body.items[i].link], // already JSON parsed
-          function(err, rows, fields){}
-        );
+      if(!err){
+        
+        
+        var id = ids;
+        
+        console.log('err', err, 'ids', ids, '_blah', _blah);
+        
+        for(var i=0; i<req.body.items.length; i++){
+          db.query(
+            'call InsertPlaylistItem(?, ?, ?);',
+            [ids[0][0]['Id'], req.body.items[i].title, req.body.items[i].link], // already JSON parsed
+            function(err, rows, fields){
+              console.log(err, rows);
+            }
+          );
+        }
+      }else{
+        throw err;
       }
     }
   );
@@ -76,16 +80,16 @@ app.post('/create-playlist/', function(req, res){
 });
 
 app.get('/playlist/:id', function(req, res){
+  var id = parseInt(req.params.id);
+  console.log(id);
   db.query(
     'call MixtapeDating.GetPlaylistInfo(?)', 
     req.params.id, 
-    function(err, info, fields){
-      console.log('call GetPlaylistInfo(?):', req.params.id, info);
+    function(err, info, fields){      
       db.query(
         'call MixtapeDating.GetPlaylist(?)',
-        req.params.id,
+        id,
         function(err, items, fields){
-          console.log('GetPlaylist(?):', req.params.id, err, items)
           res.render('playlist.ejs', {
             title: info[0][0]['Title'],
             email: info[0][0]['Email'],

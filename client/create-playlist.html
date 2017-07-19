@@ -70,6 +70,8 @@ var create_playlist = function(){
   var req = new XMLHttpRequest();
   req.open('POST', HOST + '/create-playlist');
   req.setRequestHeader('Content-Type', 'application/json');
+  
+  /*
   req.onload = function(e){
     var link = document.createElement('a');
     link.href = HOST + '/playlist/' + JSON.parse(e.target.response).id;
@@ -78,6 +80,7 @@ var create_playlist = function(){
     output.innerHTML = '';
     output.appendChild(link);
   };
+  */
   req.send(JSON.stringify(payload));
 };
 

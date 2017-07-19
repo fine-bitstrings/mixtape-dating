@@ -43,8 +43,10 @@ create procedure MixtapeDating.InsertPlaylistItem
 	in _Link varchar(255)
 )
 begin
-	insert intO PlaylistItem (PlaylistId, Title, Link)
+	insert into PlaylistItem (PlaylistId, Title, Link)
 	values (_PlaylistId, _Title, _Link);
+  
+  select mysql_insert_id();
 end //
 delimiter ;
 
