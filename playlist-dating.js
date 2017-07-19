@@ -50,18 +50,19 @@ app.get('/', function(req, res){
 
 app.post('/create-playlist/', function(req, res){
   
-  console.log('title', req.body.title, 'email', req.body.email);
+  console.log('/create-playlist/: title', req.body.title, 'email', req.body.email, 'items', req.body.items);
   // playlists.push(req.body);
   // playlists[playlists.length-1].url = '/playlist/' + id;
   db.query(
     'call InsertPlaylist(?, ?);', 
     [req.body.title, req.body.email],
-    function(err, ids, fields){ // ;)
+    function(err, ids, _blah){ // ;)
+      console.log('ids', ids);
       // var id = ids[0]['Id']; <-- currently evil
-      for(var i=0; i<req.body.playlist.length; i++){
+      for(var i=0; i<req.body.items.length; i++){
         db.query(
           'call InsertPlaylistItem (?, ?, ?);',
-          [ids[0]['Id'], req.body.playlist[i].title, req.body.playlist[i].link], // already JSON parsed
+          [ids['Id'], req.body.items[i].title, req.body.items[i].link], // already JSON parsed
           function(err, rows, fields){}
         );
       }
