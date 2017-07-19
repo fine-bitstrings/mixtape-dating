@@ -56,7 +56,6 @@ app.post('/create-playlist/', function(req, res){
     [req.body.title, req.body.email],
     function(err, ids, fields){ // ;)
       // why is ids undefined?
-      console.log('ids:', ids);
       var id = ids[0]['Id'];
       for(var i=0; i<req.body.playlist.length; i++){
         db.query(
@@ -65,7 +64,7 @@ app.post('/create-playlist/', function(req, res){
           function(err, rows, fields){
             res.send(JSON.stringify({id: id}));
           }
-        );        
+        );
       }
     }
   );
