@@ -49,25 +49,29 @@ app.get('/', function(req, res){
 });
 
 app.post('/create-playlist/', function(req, res){
+  
+  console.log('title', req.body.title, 'email', req.body.email);
   // playlists.push(req.body);
   // playlists[playlists.length-1].url = '/playlist/' + id;
   db.query(
     'call InsertPlaylist(?, ?);', 
     [req.body.title, req.body.email],
     function(err, ids, fields){ // ;)
-      // why is ids undefined?
-      var id = ids[0]['Id'];
+      // var id = ids[0]['Id']; <-- currently evil
       for(var i=0; i<req.body.playlist.length; i++){
         db.query(
           'call InsertPlaylistItem (?, ?, ?);',
-          [id, req.body.playlist[i].title, req.body.playlist[i].link],
-          function(err, rows, fields){
-            res.send(JSON.stringify({id: id}));
-          }
+          [ids[0]['Id'], req.body.playlist[i].title, req.body.playlist[i].link], // already JSON parsed
+          function(err, rows, fields){}
         );
       }
     }
   );
+  
+  // db.query(
+    // 'call InsertPlaylist(?, ?);', 
+    // [req.body]
+  // res.send(JSON.stringify({id: id}));
 });
 
 app.get('/playlist/:id', function(req, res){

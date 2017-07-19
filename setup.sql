@@ -24,14 +24,12 @@ create table if not exists PlaylistItem (
 delimiter //
 create procedure MixtapeDating.InsertPlaylist
 (
-	in Title varchar(255),
-	in Email varchar(255)
+	in _Title varchar(255),
+	in _Email varchar(255)
 )
 begin
-	insert into 
-		Playlist (Title, Email) 
-  values
-		(_Title, _Email);
+	insert into Playlist (Title, Email) 
+  values (_Title, _Email);
     
 	select last_insert_id() as Id;
 end //
