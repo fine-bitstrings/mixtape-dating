@@ -52,19 +52,11 @@ app.post('/create-playlist/', function(req, res){
     [req.body.title, req.body.email],
     function(err, ids, _blah){ // ;)
       if(!err){
-        
-        
-        var id = ids;
-        
-        console.log('err', err, 'ids', ids, '_blah', _blah);
-        
         for(var i=0; i<req.body.items.length; i++){
           db.query(
             'call InsertPlaylistItem(?, ?, ?);',
             [ids[0][0]['Id'], req.body.items[i].title, req.body.items[i].link], // already JSON parsed
-            function(err, rows, fields){
-              console.log(err, rows);
-            }
+            function(err, rows, fields){}
           );
         }
       }else{
@@ -81,7 +73,6 @@ app.post('/create-playlist/', function(req, res){
 
 app.get('/playlist/:id', function(req, res){
   var id = parseInt(req.params.id);
-  console.log(id);
   db.query(
     'call MixtapeDating.GetPlaylistInfo(?)', 
     req.params.id, 
