@@ -3,6 +3,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
+const mysql = require('mysql');
+
+var db = mysql.createConnection({
+  host: 'localhost',
+  user: 'mixtape-dating',
+  password: 'mypublicpassword',
+  database: 'MixtapeDating'
+});
+
+db.connect();
 
 const app = express();
 
@@ -17,18 +27,53 @@ app.use(bodyParser.json());
 app.use(express.static('views'));
 
 app.get('/', function(req, res){
-  res.render('index.ejs', {playlists: playlists});
+  console.log('get / routed...')
+  var playlists = [];
+  db.query('call GetPlaylists()', [], function(err, rows, fields){
+    console.log('call GetPlaylist:', err, rows, fields);
+    playlists = [];
+    
+    for(var i=0; i<rows.length; i++){
+      playlists.push({title: rows[i].Title, email: rows[i].Email});
+    }
+    
+    res.render('index.ejs', {playlists: playlists});
+  });
+  
+  console.log('/ rendering...')
 });
 
 app.post('/create-playlist/', function(req, res){
+  console.log('post /create-playlist/');
   playlists.push(req.body);
   var id = (playlists.length-1).toString();
   playlists[playlists.length-1].url = '/playlist/' + id;
   res.send(JSON.stringify({id: id}));
+  
+  var r = db.query(
+    'call InsertPlaylist (?, ?);', 
+    [req.body.title, req.body.email],
+    function(err, rows, fields){
+      console.log(err, rows, fields);
+      var id = rows[0]['Id'];
+      
+      for(var i=0; i<req.body.playlist.length; i++){
+        db.query(
+          'call InsertPlaylistItem (?, ?, ?);',
+          [id, req.body.playlist[i].title, req.body.playlist[i].link],
+          function(err, rows, fields){
+            console.log('InsertPlaylistItem called');
+          }
+        );        
+      }
+
+      
+    }
+  );
 });
 
 app.get('/playlist/:id', function(req, res){
-  console.log('playlist/' + req.params.id, playlists[req.params.id]);
+  console.log('get /playlist/:id')
   res.render('playlist.ejs', {playlist: playlists[req.params.id]});
 });
 

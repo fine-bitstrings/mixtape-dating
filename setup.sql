@@ -1,59 +1,72 @@
-USE MixtapeDating;
+create schema MixtapeDating;
+use MixtapeDating;
 
--- Tables
--- The Playlist table gets featured on the front page. 
-CREATE TABLE Playlist (
-	Id INT PRIMARY KEY AUTO_INCREMENT, 
-	Title VARCHAR(255),
-	Email VARCHAR(255),
+/* Tables */
+/* The Playlist table gets featured on the front page. */
+create table if not exists Playlist (
+	Id int primary key AUTO_inCREMENT, 
+	Title varchar(255),
+	Email varchar(255),
 	CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- The PlaylistItem gets featured at /playlist/:id
-CREATE TABLE PlaylistItem (
-	Id INT PRIMARY KEY AUTO_INCREMENT,
-	PlaylistId INT, 
-	Title VARCHAR(255),
-	Link VARCHAR(255)
+/* The PlaylistItem gets featured at /playlist/:id */
+create table if not exists PlaylistItem (
+	Id int primary key AUTO_inCREMENT,
+	PlaylistId int, 
+	Title varchar(255),
+	Link varchar(255)
 );
 
--- Stored Procedures
--- Insert playlist
-CREATE PROCEDURE InsertPlaylist
+/* Stored Procedures */
+/* insert playlist */
+delimiter //
+create procedure MixtapeDating.InsertPlaylist
 (
-	IN Title VARCHAR(255),
-	IN Email VARCHAR(255),
-	OUT PlaylistId INT
+	in Title varchar(255),
+	in Email varchar(255)
 )
-BEGIN
-	INSERT INTO Playlist (Title, Email)
-	VALUES (@Title, @Email);
-	SELECT LAST_INSERT_ID() AS @PlaylistId;
-END
+begin
+	insert into 
+		Playlist (Title, Email) 
+    values
+		(@Title, @Email);
+	select last_insert_id() as Id;
+end //
+delimiter ;
 
-CREATE PROCEDURE InsertPlaylistItem
+delimiter //
+create procedure MixtapeDating.InsertPlaylistItem
 (
-	IN PlaylistId INT, 
-	IN Title VARCHAR(255),
-	IN Link VARCHAR(255)
+	in PlaylistId int, 
+	in Title varchar(255),
+	in Link varchar(255)
 )
-BEGIN
-	INSERT INTO PlaylistItem (PlaylistId, Title, Link)
-	VALUES (@PlaylistId, @Title, @Link);
-END
+begin
+	insert intO PlaylistItem (PlaylistId, Title, Link)
+	values (@PlaylistId, @Title, @Link);
+end //
+delimiter ;
 
--- Fetch all playlists
-CREATE PROCEDURE GetPlaylists
-BEGIN
-	SELECT Id, Title, Email 
-	FROM Playlist;
-END
+/* Fetch all playlists */
+delimiter //
+create procedure MixtapeDating.GetPlaylists
+()
+begin
+	select Id, Title, Email 
+	from Playlist;
+end //
+delimiter ;
 
--- Fetch all playlist items for a playlist
-CREATE PROCEDURE GetPlaylist
-(IN Id INT)
-BEGIN
-	SELECT PlaylistId, Id, Title, Link
-	FROM PlaylistItem
-	WHERE Id = @Id; 
-END
+/* Fetch all playlist items for a playlist */
+delimiter //
+create procedure MixtapeDating.GetPlaylist
+(
+	in Id int
+)
+begin
+	select PlaylistId, Id, Title, Link
+	from PlaylistItem
+	where Id = @Id; 
+end //
+delimiter ;
